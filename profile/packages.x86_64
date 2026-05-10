@@ -13,7 +13,6 @@ btrfs-progs
 clonezilla
 cloud-init
 cryptsetup
-darkhttpd
 ddrescue
 dhcpcd
 diffutils
@@ -39,7 +38,6 @@ grub
 hdparm
 hyperv
 intel-ucode
-irssi
 iw
 iwd
 jfsutils
@@ -50,7 +48,6 @@ lftp
 libfido2
 libusb-compat
 linux
-linux-atm
 linux-firmware
 linux-firmware-marvell
 livecd-sounds
@@ -85,17 +82,13 @@ openssh
 openvpn
 partclone
 parted
-partimage
 pcsclite
-ppp
-pptpclient
 pv
 qemu-guest-agent
 refind
 reflector
 rsync
 rxvt-unicode-terminfo
-screen
 sdparm
 sequoia-sq
 sg3_utils
@@ -121,7 +114,6 @@ vpnc
 wireless-regdb
 wireless_tools
 wpa_supplicant
-wvdial
 xdg-utils
 xfsprogs
 xl2tpd

@@ -102,17 +102,4 @@ jobs:
             output/*.iso
             output/*.sha256
             output/*.sha512
-          retention-days: 7
-
-      - name: Create Release
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: build-${{ github.run_number }}
-          name: KernOS Build ${{ github.run_number }}
-          files: |
-            output/*.iso
-            output/*.sha256
-            output/*.sha512
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          retention-days: 30

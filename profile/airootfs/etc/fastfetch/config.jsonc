@@ -1,0 +1,23 @@
+{
+    "logo": {
+        "source": "/etc/fastfetch/kernos.txt",
+        "type": "file",
+        "color": {
+            "1": "cyan",
+            "2": "blue"
+        }
+    },
+    "modules": [
+        "os",
+        "kernel",
+        "uptime",
+        "packages",
+        "shell",
+        "display",
+        "terminal",
+        "cpu",
+        "gpu",
+        "memory",
+        "disk"
+    ]
+}

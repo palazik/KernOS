@@ -8,11 +8,6 @@ out/
 *.tar.xz
 *.zst
 
-# mkarchiso temp dirs
-airootfs/
-efiboot/
-iso/
-
 # pacman cache / db
 *.pkg.tar.zst
 *.pkg.tar.xz

@@ -1,0 +1,118 @@
+name: Build KernOS ISO
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+      options: --privileged
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update keyring and system
+        run: |
+          pacman -Sy --needed --noconfirm archlinux-keyring
+          pacman -Syu --noconfirm
+
+      - name: Install dependencies
+        run: |
+          pacman -S --needed --noconfirm \
+            arch-install-scripts \
+            bash \
+            dosfstools \
+            e2fsprogs \
+            erofs-utils \
+            gnupg \
+            grub \
+            jq \
+            libarchive \
+            libisoburn \
+            mtools \
+            openssl \
+            squashfs-tools \
+            archiso
+
+      - name: Create ephemeral PGP key
+        run: |
+          mkdir -p /tmp/gnupg
+          chmod 700 /tmp/gnupg
+
+          cat <<EOF > /tmp/gnupg/gpg.conf
+          quiet
+          batch
+          no-tty
+          no-permission-warning
+          export-options no-export-attributes,export-clean
+          list-options no-show-keyring
+          armor
+          no-emit-version
+          EOF
+
+          gpg --homedir /tmp/gnupg --gen-key <<GPGEOF
+          %echo Generating ephemeral KernOS key pair...
+          Key-Type: eddsa
+          Key-Curve: ed25519
+          Key-Usage: sign
+          Name-Real: KernOS Release
+          Name-Comment: Ephemeral Signing Key
+          Name-Email: kernos@kernos.sh
+          Expire-Date: 0
+          %no-protection
+          %commit
+          %echo Done
+          GPGEOF
+
+          echo "PGP_KEY_ID=$(gpg --homedir /tmp/gnupg --list-secret-keys --with-colons | awk -F':' '/sec/{ print $5 }')" >> $GITHUB_ENV
+
+      - name: Build KernOS ISO
+        run: |
+          mkdir -p output tmp
+          GNUPGHOME=/tmp/gnupg mkarchiso \
+            -D kernos \
+            -g "${{ env.PGP_KEY_ID }}" \
+            -o output/ \
+            -w tmp/ \
+            -m iso \
+            -v profile/
+
+      - name: Create checksums
+        run: |
+          cd output
+          for iso in *.iso; do
+            b2sum "$iso" > "$iso.b2"
+            md5sum "$iso" > "$iso.md5"
+            sha256sum "$iso" > "$iso.sha256"
+            sha512sum "$iso" > "$iso.sha512"
+          done
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kernos-iso
+          path: |
+            output/*.iso
+            output/*.sha256
+            output/*.sha512
+          retention-days: 7
+
+      - name: Create Release
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: build-${{ github.run_number }}
+          name: KernOS Build ${{ github.run_number }}
+          files: |
+            output/*.iso
+            output/*.sha256
+            output/*.sha512
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

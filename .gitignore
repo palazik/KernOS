@@ -1,0 +1,56 @@
+# archiso build artifacts
+work/
+out/
+*.iso
+*.img
+*.tar.gz
+*.tar.zst
+*.tar.xz
+*.zst
+
+# mkarchiso temp dirs
+airootfs/
+efiboot/
+iso/
+
+# pacman cache / db
+*.pkg.tar.zst
+*.pkg.tar.xz
+*.db
+*.db.tar.gz
+*.files
+*.files.tar.gz
+
+# GPG / signing keys
+*.gpg
+*.asc
+*.key
+*.sig
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# logs
+*.log
+*.log.*
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# secrets / API keys
+.env
+.env.*
+secrets/
+*.secret
+
+# os junk
+Thumbs.db
+desktop.ini

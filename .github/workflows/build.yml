@@ -1,10 +1,12 @@
-name: Build KernOS ISO
+name: Build KernOS Kernel
 
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
+    paths:
+      - 'PKGBUILD'
+      - 'config'
+      - 'patches/**'
   workflow_dispatch:
 
 jobs:
@@ -23,83 +25,100 @@ jobs:
           pacman -Sy --needed --noconfirm archlinux-keyring
           pacman -Syu --noconfirm
 
-      - name: Install dependencies
+      - name: Install build dependencies
         run: |
           pacman -S --needed --noconfirm \
-            arch-install-scripts \
-            bash \
-            dosfstools \
-            e2fsprogs \
-            erofs-utils \
-            gnupg \
-            grub \
-            jq \
-            libarchive \
-            libisoburn \
-            mtools \
-            openssl \
-            squashfs-tools \
-            archiso
+            base-devel \
+            bc \
+            cpio \
+            gettext \
+            libelf \
+            pahole \
+            perl \
+            python \
+            rsync \
+            tar \
+            xz \
+            clang \
+            llvm \
+            lld \
+            ccache \
+            git \
+            zstd
 
-      - name: Create ephemeral PGP key
+      - name: Setup ccache
         run: |
-          mkdir -p /tmp/gnupg
-          chmod 700 /tmp/gnupg
+          mkdir -p /ccache
+          ccache --max-size=5G
+          ccache --set-config=compiler_check=content
+          echo "CCACHE_DIR=/ccache" >> $GITHUB_ENV
+          echo "PATH=/usr/lib/ccache/bin:$PATH" >> $GITHUB_ENV
 
-          cat <<EOF > /tmp/gnupg/gpg.conf
-          quiet
-          batch
-          no-tty
-          no-permission-warning
-          export-options no-export-attributes,export-clean
-          list-options no-show-keyring
-          armor
-          no-emit-version
-          EOF
+      - name: Restore ccache
+        uses: actions/cache/restore@v4
+        with:
+          path: /ccache
+          key: ccache-kernel-${{ runner.os }}-${{ hashFiles('config') }}-${{ github.run_id }}
+          restore-keys: |
+            ccache-kernel-${{ runner.os }}-${{ hashFiles('config') }}-
+            ccache-kernel-${{ runner.os }}-
 
-          gpg --homedir /tmp/gnupg --gen-key <<GPGEOF
-          %echo Generating ephemeral KernOS key pair...
-          Key-Type: eddsa
-          Key-Curve: ed25519
-          Key-Usage: sign
-          Name-Real: KernOS Release
-          Name-Comment: Ephemeral Signing Key
-          Name-Email: kernos@kernos.sh
-          Expire-Date: 0
-          %no-protection
-          %commit
-          %echo Done
-          GPGEOF
-
-          echo "PGP_KEY_ID=$(gpg --homedir /tmp/gnupg --list-secret-keys --with-colons | awk -F':' '/sec/{ print $5 }')" >> $GITHUB_ENV
-
-      - name: Build KernOS ISO
+      - name: Setup build user (makepkg needs non-root)
         run: |
-          mkdir -p output tmp
-          GNUPGHOME=/tmp/gnupg mkarchiso \
-            -D kernos \
-            -g "${{ env.PGP_KEY_ID }}" \
-            -o output/ \
-            -w tmp/ \
-            -m iso \
-            -v profile/
+          useradd -m builder
+          echo 'builder ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+          chown -R builder:builder .
+          chown -R builder:builder /ccache
 
-      - name: Create checksums
+      - name: Build kernel
         run: |
-          cd output
-          for iso in *.iso; do
-            b2sum "$iso" > "$iso.b2"
-            md5sum "$iso" > "$iso.md5"
-            sha256sum "$iso" > "$iso.sha256"
-            sha512sum "$iso" > "$iso.sha512"
-          done
+          sudo -u builder bash -c "
+            export CCACHE_DIR=/ccache
+            export PATH=/usr/lib/ccache/bin:\$PATH
+            export KBUILD_BUILD_TIMESTAMP=''
+            export KBUILD_BUILD_USER=builder
+            export KBUILD_BUILD_HOST=linux-kernos
+            makepkg -s --noconfirm --skippgpcheck
+          "
 
-      - name: Upload ISO artifact
+      - name: Show ccache stats
+        run: ccache --show-stats
+
+      - name: Save ccache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: /ccache
+          key: ccache-kernel-${{ runner.os }}-${{ hashFiles('config') }}-${{ github.run_id }}
+
+      - name: Upload kernel packages
         uses: actions/upload-artifact@v4
         with:
-          name: kernos-iso
+          name: linux-kernos-packages
           path: |
-            output/*.iso
-            output/*.sha256
-            output/*.sha512
+            linux-kernos-*.pkg.tar.zst
+            linux-kernos-headers-*.pkg.tar.zst
           retention-days: 30
+
+      - name: Create pacman repo database
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          repo-add kernos.db.tar.gz linux-kernos-*.pkg.tar.zst
+          ln -sf kernos.db.tar.gz kernos.db
+          ln -sf kernos.files.tar.gz kernos.files
+
+      - name: Create Release
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: kernel-${{ github.run_number }}
+          name: KernOS Kernel Build ${{ github.run_number }}
+          files: |
+            linux-kernos-*.pkg.tar.zst
+            linux-kernos-headers-*.pkg.tar.zst
+            kernos.db.tar.gz
+            kernos.db
+            kernos.files.tar.gz
+            kernos.files
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

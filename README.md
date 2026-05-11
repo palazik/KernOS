@@ -8,7 +8,7 @@ No bloat. No compromises. Just a fast, clean system.
 
 [![KernOS License: GPL-2.0](https://img.shields.io/badge/License-KernOS%20GPL%20v2-blue.svg)](LICENSE)
 [![archiso License: GPL-3.0](https://img.shields.io/badge/License-archiso%20GPL%20v3-blue.svg)](LICENSE)
-[![Based on CachyOS & Arch](https://img.shields.io/badge/Based%20on-CachyOS%20&Arch%20Linux-1793d1?logo=arch-linux)](https://archlinux.org)
+[![Based on CachyOS & Arch](https://img.shields.io/badge/Based%20on-CachyOS%20&%20Arch%20Linux-1793d1?logo=arch-linux)](https://archlinux.org)
 
 </div>
 

@@ -1,3 +1,4 @@
+
 <div align="center">
 
 # KernOS
@@ -5,8 +6,8 @@
 **An Arch-based Linux distribution built for performance and simplicity.**  
 No bloat. No compromises. Just a fast, clean system.
 
-[![KernOS License: GPL-2.0](https://img.shields.io/badge/KernOS-License-GPL%20v2-blue.svg)](LICENSE)
-[![archiso License: GPL-3.0](https://img.shields.io/badge/archiso-License-GPL%20v3-blue.svg)](LICENSE)
+[![KernOS License: GPL-2.0](https://img.shields.io/badge/License-KernOS%20GPL%20v2-blue.svg)](LICENSE)
+[![archiso License: GPL-3.0](https://img.shields.io/badge/License-archiso%20GPL%20v3-blue.svg)](LICENSE)
 [![Based on Arch](https://img.shields.io/badge/Based%20on-Arch%20Linux-1793d1?logo=arch-linux)](https://archlinux.org)
 [![Built with archiso](https://img.shields.io/badge/Built%20with-archiso-grey)](https://gitlab.archlinux.org/archlinux/archiso)
 

@@ -6,7 +6,7 @@ iso_label="KernOS_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
 iso_publisher="KernOS <https://github.com/palazik/KernOS>"
 iso_application="KernOS Linux"
 iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
-install_dir="kernos"
+install_dir="arch"
 buildmodes=('iso')
 bootmodes=('bios.syslinux'
            'uefi.systemd-boot')

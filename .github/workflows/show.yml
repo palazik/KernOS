@@ -1,0 +1,14 @@
+name: List Files
+
+on:
+  workflow_dispatch:
+
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: List all files
+        run: find . -not -path './.git/*' | sort

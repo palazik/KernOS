@@ -12,8 +12,8 @@ jobs:
 
       - name: List all files
         run: |
-        find . -not -path './.git/*' -type f | sort | while read f; do
-          echo "========== $f =========="
-          cat "$f"
-          echo ""
-        done
+          find . -not -path './.git/*' -type f | sort | while read f; do
+            echo "========== $f =========="
+            cat "$f"
+            echo ""
+          done

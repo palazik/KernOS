@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 palazik
+# SPDX-License-Identifier: GPL-3.0-or-later
+set -euo pipefail
+
+exec pkexec env DISPLAY="${DISPLAY:-:0}" XAUTHORITY="${XAUTHORITY:-}" WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-}" \
+  XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-}" KDE_FULL_SESSION="${KDE_FULL_SESSION:-}" KDE_SESSION_VERSION="${KDE_SESSION_VERSION:-}" \
+  /usr/bin/calamares -d -c /etc/calamares/settings_offline.conf

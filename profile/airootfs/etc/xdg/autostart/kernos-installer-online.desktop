@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Install KernOS
+Exec=kernos-calamares-online
+Icon=calamares
+Terminal=false
+X-GNOME-Autostart-enabled=true

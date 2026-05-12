@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Install KernOS Offline
+Comment=Install KernOS by copying the live system
+Exec=kernos-calamares-offline
+Icon=calamares
+Terminal=false
+Categories=System;

@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: 2026 palazik
+# SPDX-License-Identifier: GPL-3.0-or-later
+---
+componentName: kernos
+strings:
+  productName: "KernOS"
+  shortProductName: "KernOS"
+  version: "rolling"
+  shortVersion: "rolling"
+  versionedName: "KernOS rolling"
+  shortVersionedName: "KernOS"
+  bootloaderEntryName: "KernOS"
+  productUrl: "https://github.com/palazik/KernOS"
+  supportUrl: "https://github.com/palazik/KernOS/issues"
+  knownIssuesUrl: "https://github.com/palazik/KernOS/issues"
+  releaseNotesUrl: "https://github.com/palazik/KernOS"
+images:
+  productLogo: ""
+  productIcon: ""
+  productWelcome: ""
+style:
+  sidebarBackground: "#111318"
+  sidebarText: "#f5f7fb"
+  sidebarTextSelect: "#ffffff"
+  sidebarTextHighlight: "#2aa9ff"
+  windowExpanding: true
+slideshow: "show.qml"

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Install KernOS
+Comment=Install KernOS with online package selection
+Exec=kernos-calamares-online
+Icon=calamares
+Terminal=false
+Categories=System;

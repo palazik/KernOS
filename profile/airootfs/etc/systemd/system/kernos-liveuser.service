@@ -1,0 +1,14 @@
+[Unit]
+Description=Create the KernOS live user
+Before=display-manager.service
+ConditionPathExists=!/run/kernos-liveuser-created
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash -c 'id liveuser >/dev/null 2>&1 || useradd -m -G wheel,audio,video,storage,network,power -s /usr/bin/bash liveuser'
+ExecStart=/usr/bin/passwd -d liveuser
+ExecStart=/usr/bin/install -d -o liveuser -g liveuser /home/liveuser/Desktop
+ExecStart=/usr/bin/touch /run/kernos-liveuser-created
+
+[Install]
+WantedBy=graphical.target

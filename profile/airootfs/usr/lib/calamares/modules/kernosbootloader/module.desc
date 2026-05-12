@@ -1,0 +1,9 @@
+# SPDX-FileCopyrightText: 2026 palazik
+# SPDX-License-Identifier: GPL-3.0-or-later
+---
+type: job
+name: kernosbootloader
+interface: python
+script: main.py
+weight: 1
+caption: "Installing bootloader"
